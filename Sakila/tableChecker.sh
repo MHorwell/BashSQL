@@ -1,9 +1,11 @@
 #!/bin/bash
 
-database=sakila
-table=versionid
-
-if [ $(mysql -s -u root -h 192.168.56.1 -p123 -e "select count(*) from information_schema.tables where table_schema='$database' and table_name='$table';") -eq 0 ]
+database=testDatabase
+#Not blank
+if [ $(mysql -u root -h 192.168.56.1 --skip-column-names -p123 -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='$database';") -eq 0 ]
+	then
+	$(mysql -s -u root -h 192.168.56.1 -p123 -e "CREATE DATABASE $database; CREATE TABLE $database.versionid; INSERT INTO $database.versionid VALUES (0);")
+elif [ $(mysql -s -u root -h 192.168.56.1 -p123 -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema='$database' AND table_name='versionid';") -eq 0 ]
 then
-$(mysql -s -u root -h 192.168.56.1 -p123 -e "create table $database.$table (id int); INSERT INTO $database.$table VALUES (0);")
+$(mysql -s -u root -h 192.168.56.1 -p123 -e "CREATE TABLE $database.versionid (id int); INSERT INTO $database.versionid VALUES (0);")
 fi
